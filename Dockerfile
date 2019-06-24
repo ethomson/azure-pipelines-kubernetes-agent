@@ -1,0 +1,14 @@
+FROM ubuntu:xenial
+
+RUN apt-get update
+RUN apt-get -y install curl git libicu55 libcurl3 liburcu4 liblttng-ust-ctl2 liblttng-ust0 inetutils-ping uuid-runtime docker.io
+
+RUN curl https://vstsagentpackage.azureedge.net/agent/2.153.2/vsts-agent-linux-x64-2.153.2.tar.gz -o /tmp/agent.tar.gz
+
+RUN mkdir /data
+RUN mkdir /data/agent
+RUN (cd /data/agent && tar xpf /tmp/agent.tar.gz)
+
+COPY docker-run.sh /data/agent
+
+CMD /data/agent/docker-run.sh

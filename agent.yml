@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linuxagent
+spec:
+  selector:
+    matchLabels:
+      app: linuxagent
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: linuxagent
+    spec:
+      containers:
+      - name: agent-run
+        image: ethomson/azure-pipelines-agent:latest
+        command: [ '/data/agent/docker-run.sh' ]
+        volumeMounts:
+        - name: share
+          mountPath: '/data/share'
+        - name: dockersock
+          mountPath: '/var/run/docker.sock'
+        env:
+        - name: AZURE_PIPELINES_URL
+          valueFrom:
+            secretKeyRef:
+              name: agentconfig
+              key: url
+        - name: AZURE_PIPELINES_POOL
+          valueFrom:
+            secretKeyRef:
+              name: agentconfig
+              key: pool
+        - name: AZURE_PIPELINES_PAT
+          valueFrom:
+            secretKeyRef:
+              name: agentconfig
+              key: pat
+      volumes:
+      - name: share
+        hostPath:
+          path: '/data/share'
+      - name: dockersock
+        hostPath:
+          path: '/var/run/docker.sock'
