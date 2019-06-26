@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: winagent
+spec:
+  selector:
+    matchLabels:
+      app: winagent
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: winagent
+    spec:
+      containers:
+      - name: agent-run
+        image: ethomson/azure-pipelines-agent-win32
+        command: [ '/data/agent/docker-run.ps1' ]
+        volumeMounts:
+        - name: share
+          mountPath: 'C:/Data/Share'
+        - name: dockersock
+          mountPath: '\\.\pipe\docker_engine'
+        env:
+        - name: AZURE_PIPELINES_URL
+          valueFrom:
+            secretKeyRef:
+              name: agentconfig
+              key: url
+        - name: AZURE_PIPELINES_POOL
+          valueFrom:
+            secretKeyRef:
+              name: agentconfig
+              key: pool
+        - name: AZURE_PIPELINES_PAT
+          valueFrom:
+            secretKeyRef:
+              name: agentconfig
+              key: pat
+      volumes:
+      - name: share
+        hostPath:
+                path: 'C:/Data/Share'
+      - name: dockersock
+        hostPath:
+          path: '\\.\pipe\docker_engine'
