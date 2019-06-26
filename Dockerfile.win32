@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
+
+RUN mkdir C:\Temp
+
+RUN mkdir C:\Temp\Chocolatey
+ADD https://chocolatey.org/install.ps1 C:/Temp/Chocolatey
+RUN powershell C:\Temp\Chocolatey\install.ps1
+
+RUN choco install -y git -params '"/GitOnlyOnPath"'
+RUN choco install -y docker
+
+ADD https://vstsagentpackage.azureedge.net/agent/2.153.4/vsts-agent-win-x64-2.153.4.zip C:/Temp/Agent.zip
+
+RUN mkdir C:\Data
+RUN powershell -Command Expand-Archive -Path C:\Temp\Agent.zip -DestinationPath C:\Data\Agent
+
+COPY docker-run.ps1 C:/Data/Agent
+
+CMD powershell C:\Data\Agent\docker-run.ps1
