@@ -1,4 +1,4 @@
-$Default_Image="ethomson/azure-pipelines-agent-win32:latest"
+$Default_Image="ethomson/azure-pipelines-k8s-win32:latest"
 
 Set-StrictMode -Version Latest
 
@@ -49,7 +49,7 @@ $ret=0
 while ($ret -eq 0) {
 	Write-Host ""
 	Write-Host ":: Starting agent..."
-	docker run -v "C:/Tmp:C:/Tmp:ro" "${Image}" powershell 'Copy-Item C:\Tmp\Agent C:\ -Recurse ; C:\Agent\run.cmd --once'
+	docker run -v "C:/Tmp:C:/Tmp:ro" "${Agent_Image}" powershell 'Copy-Item C:\Tmp\Agent C:\ -Recurse ; C:\Agent\run.cmd --once'
 	$ret=$LastExitCode
 	Write-Host ":: Agent exited with: ${ret}"
 }

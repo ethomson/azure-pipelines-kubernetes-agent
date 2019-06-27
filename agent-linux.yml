@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: agent-run
-        image: ethomson/azure-pipelines-agent-linux
+        image: ethomson/azure-pipelines-k8s-linux
         command: [ '/data/agent/docker-run.sh' ]
         volumeMounts:
         - name: share

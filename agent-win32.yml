@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: agent-run
-        image: ethomson/azure-pipelines-agent-win32
+        image: ethomson/azure-pipelines-k8s-win32
         command: [ 'powershell', '/data/agent/k8s-run.ps1' ]
         volumeMounts:
         - name: share

@@ -10,12 +10,11 @@ if [ -z "$AZURE_PIPELINES_URL" -o -z "$AZURE_PIPELINES_POOL" -o -z "$AZURE_PIPEL
 	exit 1
 fi
 
-IMAGE="ethomson/azure-pipelines-agent-linux:latest"
-
 export AGENT_ALLOW_RUNASROOT=1
 
 export AGENT_GUID=$(uuidgen)
 export AGENT_NAME="${AZURE_PIPELINES_AGENT_NAME:-"$(hostname)_${AGENT_GUID}"}"
+export AGENT_IMAGE="${IMAGE:-"ethomson/azure-pipelines-k8s-linux:latest"}"
 
 # Register an agent that will remain idle; we always need an agent in the
 # pool and since our container agents create and delete themselves, there's
@@ -37,7 +36,7 @@ ret=0
 while [ $ret -eq 0 ]; do
     echo ""
     echo ":: Starting agent..."
-    docker run -v "/data/share:/data/share:ro" -e "AGENT_ALLOW_RUNASROOT=1" "${IMAGE}" /bin/sh -c "cp -R /data/share/agent / && /agent/run.sh --once" || ret=$? && true
+    docker run -v "/data/share:/data/share:ro" -e "AGENT_ALLOW_RUNASROOT=1" "${AGENT_IMAGE}" /bin/sh -c "cp -R /data/share/agent / && /agent/run.sh --once" || ret=$? && true
     echo ":: Agent exited with: ${ret}"
 done
 
