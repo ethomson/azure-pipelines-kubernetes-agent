@@ -35,9 +35,9 @@ CheckLastExitCode
 Write-Host ""
 Write-Host ":: Setting up runner agent (${Agent_Name})..."
 if (Test-Path C:\Tmp\Agent) {
-	attrib -h C:\Tmp\Agent\.agent
-	attrib -h C:\Tmp\Agent\.credentials
-	attrib -h C:\Tmp\Agent\.credentials_rsaparams
+	if (Test-Path C:\Tmp\Agent\.agent) { attrib -h C:\Tmp\Agent\.agent }
+	if (Test-Path C:\Tmp\Agent\.credentials) { attrib -h C:\Tmp\Agent\.credentials }
+	if (Test-Path C:\Tmp\Agent\.credentials_rsaparams) { attrib -h C:\Tmp\Agent\.credentials_rsaparams }
 	Remove-Item -Path C:\Tmp\Agent -Recurse
 }
 Copy-Item C:\Data\Agent C:\Tmp\Agent -Recurse -Force
