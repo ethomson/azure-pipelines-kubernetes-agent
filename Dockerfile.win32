@@ -15,6 +15,6 @@ RUN mkdir C:\Data
 
 RUN powershell -Command Expand-Archive -Path C:\Temp\Agent.zip -DestinationPath C:\Data\Agent
 
-COPY docker-run.ps1 C:/Data/Agent
+COPY k8s-run.ps1 C:/Data/Agent
 
-CMD powershell C:\Data\Agent\docker-run.ps1
+CMD powershell C:\Data\Agent\k8s-run.ps1

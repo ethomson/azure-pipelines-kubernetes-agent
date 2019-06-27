@@ -1,3 +1,5 @@
+$Default_Image="ethomson/azure-pipelines-agent-win32:latest"
+
 Set-StrictMode -Version Latest
 
 $ErrorActionPreference = "Stop"
@@ -15,10 +17,9 @@ function CheckLastExitCode {
 	if ($LastExitCode -ne 0) { Write-Error "Command failed with exit code ${LastExitCode}" }
 }
 
-$Image="ethomson/azure-pipelines-agent:windows"
-
 $Agent_Guid=New-Guid
 if ($Env:AZURE_PIPELINES_AGENT_NAME) { $Agent_Name=$Env:AZURE_PIPELINES_AGENT_NAME } else { $Agent_Name="$(hostname)_${Agent_Guid}" }
+if ($Env:IMAGE) { $Agent_Image=$Env:IMAGE } else { $Agent_Image=$Default_Image }
 
 # Register an agent that will remain idle; we always need an agent in the
 # pool and since our container agents create and delete themselves, there's

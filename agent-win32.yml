@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: agentw
+  name: w2
 spec:
   selector:
     matchLabels:
-      app: agentw
+      app: w2
   replicas: 1
   template:
     metadata:
       labels:
-        app: agentw
+        app: w2
     spec:
       containers:
       - name: agent-run
         image: ethomson/azure-pipelines-agent-win32
-        command: [ 'powershell', '/data/agent/docker-run.ps1' ]
+        command: [ 'powershell', '/data/agent/k8s-run.ps1' ]
         volumeMounts:
         - name: share
           mountPath: 'C:/tmp'
