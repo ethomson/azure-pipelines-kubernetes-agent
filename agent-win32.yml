@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: winagent
+  name: agentw
 spec:
   selector:
     matchLabels:
-      app: winagent
-  replicas: 2
+      app: agentw
+  replicas: 1
   template:
     metadata:
       labels:
-        app: winagent
+        app: agentw
     spec:
       containers:
       - name: agent-run
         image: ethomson/azure-pipelines-agent-win32
-        command: [ '/data/agent/docker-run.ps1' ]
+        command: [ 'powershell', '/data/agent/docker-run.ps1' ]
         volumeMounts:
         - name: share
-          mountPath: 'C:/Data/Share'
+          mountPath: 'C:/tmp'
         - name: dockersock
           mountPath: '\\.\pipe\docker_engine'
         env:
@@ -40,7 +40,7 @@ spec:
       volumes:
       - name: share
         hostPath:
-                path: 'C:/Data/Share'
+          path: 'C:/tmp'
       - name: dockersock
         hostPath:
           path: '\\.\pipe\docker_engine'

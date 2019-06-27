@@ -12,6 +12,7 @@ RUN choco install -y docker
 ADD https://vstsagentpackage.azureedge.net/agent/2.153.4/vsts-agent-win-x64-2.153.4.zip C:/Temp/Agent.zip
 
 RUN mkdir C:\Data
+
 RUN powershell -Command Expand-Archive -Path C:\Temp\Agent.zip -DestinationPath C:\Data\Agent
 
 COPY docker-run.ps1 C:/Data/Agent

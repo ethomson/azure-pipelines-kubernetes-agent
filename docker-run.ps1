@@ -34,26 +34,31 @@ CheckLastExitCode
 # Set up the actual runner that will do work.
 Write-Host ""
 Write-Host ":: Setting up runner agent (${Agent_Name})..."
-if (Test-Path C:\Data\Share\Agent) { Remove-Item -Path C:\Data\Share\Agent -Recurse }
-Copy-Item C:\Data\Agent C:\Data\Share\Agent -Recurse -Force
-C:\Data\Share\Agent\config.cmd --unattended --url "${Env:AZURE_PIPELINES_URL}" --pool "${Env:AZURE_PIPELINES_POOL}" --agent "${Agent_Name}" --auth pat --token "${Env:AZURE_PIPELINES_PAT}" --replace
+if (Test-Path C:\Tmp\Agent) {
+	attrib -h C:\Tmp\Agent\.agent
+	attrib -h C:\Tmp\Agent\.credentials
+	attrib -h C:\Tmp\Agent\.credentials_rsaparams
+	Remove-Item -Path C:\Tmp\Agent -Recurse
+}
+Copy-Item C:\Data\Agent C:\Tmp\Agent -Recurse -Force
+C:\Tmp\Agent\config.cmd --unattended --url "${Env:AZURE_PIPELINES_URL}" --pool "${Env:AZURE_PIPELINES_POOL}" --agent "${Agent_Name}" --auth pat --token "${Env:AZURE_PIPELINES_PAT}" --replace
 CheckLastExitCode
 
 # docker for windows has a bug when running docker-in-docker; it detects
 # a closed pipe on the inner docker and exits with return code 1 always.
 # until that's fixed, loop forever :(
 $ret=0
-while ($True) {
+while ($ret -eq 0 -or $ret -eq 1) {
 	Write-Host ""
 	Write-Host ":: Starting agent..."
-	docker run -v "C:/Data/Share:C:/Data/Share:ro" "${Image}" powershell 'Copy-Item C:\Data\Share\Agent C:\ -Recurse ; C:\Agent\run.cmd --once ; exit 99'
+	docker run -v "C:/Tmp:C:/Tmp:ro" "${Image}" powershell 'Copy-Item C:\Tmp\Agent C:\ -Recurse ; C:\Agent\run.cmd --once'
 	$ret=$LastExitCode
 	Write-Host ":: Agent exited with: ${ret}"
 }
 
 Write-Host ""
 Write-Host ":: Cleaning up runner agent..."
-C:\Data\Share\Agent\config.cmd remove --auth pat --token "${Env:AZURE_PIPELINES_PAT}"
+C:\Tmp\Agent\config.cmd remove --auth pat --token "${Env:AZURE_PIPELINES_PAT}"
 CheckLastExitCode
 
 echo ":: Exiting (exit code ${ret})"
