@@ -45,11 +45,8 @@ Copy-Item C:\Data\Agent C:\Tmp\Agent -Recurse -Force
 C:\Tmp\Agent\config.cmd --unattended --url "${Env:AZURE_PIPELINES_URL}" --pool "${Env:AZURE_PIPELINES_POOL}" --agent "${Agent_Name}" --auth pat --token "${Env:AZURE_PIPELINES_PAT}" --replace
 CheckLastExitCode
 
-# docker for windows has a bug when running docker-in-docker; it detects
-# a closed pipe on the inner docker and exits with return code 1 always.
-# until that's fixed, loop forever :(
 $ret=0
-while ($ret -eq 0 -or $ret -eq 1) {
+while ($ret -eq 0) {
 	Write-Host ""
 	Write-Host ":: Starting agent..."
 	docker run -v "C:/Tmp:C:/Tmp:ro" "${Image}" powershell 'Copy-Item C:\Tmp\Agent C:\ -Recurse ; C:\Agent\run.cmd --once'
