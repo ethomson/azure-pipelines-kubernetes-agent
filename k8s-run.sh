@@ -37,8 +37,6 @@ echo ":: Setting up runner agent (${AGENT_NAME})..."
 rm -rf "${AGENT_SHAREDIR}/agent"
 cp -R /data/agent "${AGENT_SHAREDIR}"
 
-ls -FlasR "${AGENT_SHAREDIR}"
-
 # Configure the agent; map the shared path as a read-write share so that
 # we can set up the tokens for the actual runner.
 docker run -v "${AGENT_SHAREDIR}:${AGENT_SHAREDIR}" -e "AGENT_ALLOW_RUNASROOT=1" "${AGENT_IMAGE}" "${AGENT_SHAREDIR}/agent/config.sh" --unattended --url "${AZURE_PIPELINES_URL}" --pool "${AZURE_PIPELINES_POOL}" --agent "${AGENT_NAME}" --auth pat --token "${AZURE_PIPELINES_PAT}"
