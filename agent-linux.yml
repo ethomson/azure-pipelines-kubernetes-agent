@@ -15,13 +15,15 @@ spec:
       containers:
       - name: agent-run
         image: ethomson/azure-pipelines-k8s-linux
-        command: [ '/data/agent/docker-run.sh' ]
+        command: [ '/data/agent/k8s-run.sh' ]
         volumeMounts:
         - name: share
           mountPath: '/data/share'
         - name: dockersock
           mountPath: '/var/run/docker.sock'
         env:
+        - name: IMAGE
+          value: "ethomson/rust-build-linux:latest"
         - name: AZURE_PIPELINES_URL
           valueFrom:
             secretKeyRef:

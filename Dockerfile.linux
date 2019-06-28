@@ -9,6 +9,6 @@ RUN mkdir /data
 RUN mkdir /data/agent
 RUN (cd /data/agent && tar xpf /tmp/agent.tar.gz)
 
-COPY docker-run.sh /data/agent
+COPY k8s-run.sh /data/agent
 
-CMD /data/agent/docker-run.sh
+CMD /data/agent/k8s-run.sh
