@@ -34,6 +34,10 @@ if ($Env:SHARE_DIR) { $Agent_ShareDir=$ENV:SHARE_DIR } else { $Agent_ShareDir=$D
 
 $Agent_MapPath=$Agent_ShareDir.replace("\\", "/");
 
+Write-Host ""
+Write-Host ":: Updating runner image (${Agent_Image})..."
+docker pull "${Agent_Image}"
+
 # Register an agent that will remain idle; we always need an agent in the
 # pool and since our container agents create and delete themselves, there's
 # a possibility of the pool existing with no agents in it, and jobs will

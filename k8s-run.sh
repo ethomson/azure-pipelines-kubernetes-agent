@@ -17,8 +17,12 @@ export AGENT_ALLOW_RUNASROOT=1
 
 export AGENT_GUID=$(uuidgen)
 export AGENT_NAME="${AZURE_PIPELINES_AGENT_NAME:-"$(hostname)_${AGENT_GUID}"}"
-export AGENT_IMAGE="${IMAGE:-"ethomson/azure-pipelines-k8s-linux:latest"}"
+export AGENT_IMAGE="${IMAGE:-$DEFAULT_IMAGE}"
 export AGENT_SHAREDIR="${SHARE_DIR:-$DEFAULT_SHAREDIR}"
+
+echo ""
+echo ":: Updating runner image (${AGENT_IMAGE})..."
+docker pull "${AGENT_IMAGE}"
 
 # Register an agent that will remain idle; we always need an agent in the
 # pool and since our container agents create and delete themselves, there's
@@ -49,13 +53,13 @@ while [ $ret -eq 0 ]; do
 	# Run the agent; map the shared path as a read-only share so that
 	# the build code is wholly isolated and cannot mutate any shared
 	# state.
-	docker run -v "${AGENT_SHAREDIR}:${AGENT_SHAREDIR}:ro" -e "AGENT_ALLOW_RUNASROOT=1" "${AGENT_IMAGE}" /bin/sh -c "cp -R ${AGENT_SHAREDIR}/agent / && /agent/run.sh --once" || ret=$? && true
+	docker run -v "${AGENT_SHAREDIR}:${AGENT_SHAREDIR}:ro" -v "/var/run/docker.sock:/var/run/docker.sock" -e "AGENT_ALLOW_RUNASROOT=1" "${AGENT_IMAGE}" /bin/sh -c "cp -R ${AGENT_SHAREDIR}/agent / && /agent/run.sh --once" || ret=$? && true
 	echo ":: Agent exited with: ${ret}"
 done
 
 echo ""
 echo ":: Cleaning up runner agent..."
-"${AGENT_SHAREDIR}/agent/config.sh" remove --auth pat --token "${AZURE_PIPELINES_PAT}"
+docker run -v "${AGENT_SHAREDIR}:${AGENT_SHAREDIR}" -e "AGENT_ALLOW_RUNASROOT=1" "${AGENT_IMAGE}" "${AGENT_SHAREDIR}/agent/config.sh" remove --auth pat --token "${AZURE_PIPELINES_PAT}"
 
 echo ":: Exiting (exit code ${ret})"
 exit $ret
