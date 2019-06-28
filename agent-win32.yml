@@ -25,7 +25,7 @@ spec:
         - name: IMAGE
           value: "ethomson/rust-build-win32:latest"
         - name: SHARE_DIR
-          value: "C:\Tmp"
+          value: "C:\\Tmp"
         - name: AZURE_PIPELINES_URL
           valueFrom:
             secretKeyRef:
