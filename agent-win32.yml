@@ -22,6 +22,8 @@ spec:
         - name: dockersock
           mountPath: '\\.\pipe\docker_engine'
         env:
+        - name: IMAGE
+          value: "ethomson/rust-build-win32:latest"
         - name: AZURE_PIPELINES_URL
           valueFrom:
             secretKeyRef:
