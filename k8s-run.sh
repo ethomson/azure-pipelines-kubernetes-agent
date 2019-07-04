@@ -21,6 +21,16 @@ export AGENT_IMAGE="${IMAGE:-$DEFAULT_IMAGE}"
 export AGENT_SHAREDIR="${SHARE_DIR:-$DEFAULT_SHAREDIR}"
 
 echo ""
+echo ":: Querying machine information..."
+echo ""
+echo "Kernel version:"
+uname -a
+
+echo ""
+echo "Processor information:"
+cat /proc/cpuinfo
+
+echo ""
 echo ":: Updating runner image (${AGENT_IMAGE})..."
 docker pull "${AGENT_IMAGE}"
 
