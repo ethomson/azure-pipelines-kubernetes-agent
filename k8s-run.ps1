@@ -67,6 +67,10 @@ $ret=0
 
 while ($ret -eq 0) {
 	Write-Host ""
+	Write-Host ":: Updating agent image..."
+    docker pull "${Agent_Image}"
+
+	Write-Host ""
 	Write-Host ":: Starting agent..."
 
 	# Run the agent; map the shared path as a read-only share so that

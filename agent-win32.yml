@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: w2
+  name: win1
 spec:
   selector:
     matchLabels:
-      app: w2
-  replicas: 1
+      app: win1
+  replicas: 5
   template:
     metadata:
       labels:
-        app: w2
+        app: win1
     spec:
       containers:
       - name: agent-run
@@ -27,15 +27,9 @@ spec:
         - name: SHARE_DIR
           value: "C:\\Tmp"
         - name: AZURE_PIPELINES_URL
-          valueFrom:
-            secretKeyRef:
-              name: agentconfig
-              key: url
+          value: "https://dev.azure.com/rust-lang"
         - name: AZURE_PIPELINES_POOL
-          valueFrom:
-            secretKeyRef:
-              name: agentconfig
-              key: pool
+          value: "windows-private"
         - name: AZURE_PIPELINES_PAT
           valueFrom:
             secretKeyRef:
