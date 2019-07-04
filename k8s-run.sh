@@ -47,6 +47,10 @@ docker run -v "${AGENT_SHAREDIR}:${AGENT_SHAREDIR}" -e "AGENT_ALLOW_RUNASROOT=1"
 
 ret=0
 while [ $ret -eq 0 ]; do
+    echo ""
+    echo ":: Updating agent image..."
+    docker pull "${AGENT_IMAGE}"
+
 	echo ""
 	echo ":: Starting agent..."
 
