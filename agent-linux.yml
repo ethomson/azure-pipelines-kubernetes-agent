@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linuxagent
+  name: linux1
 spec:
   selector:
     matchLabels:
-      app: linuxagent
-  replicas: 2
+      app: linux1
+  replicas: 5
   template:
     metadata:
       labels:
-        app: linuxagent
+        app: linux1
     spec:
       containers:
       - name: agent-run
@@ -25,15 +25,9 @@ spec:
         - name: IMAGE
           value: "ethomson/rust-build-linux:latest"
         - name: AZURE_PIPELINES_URL
-          valueFrom:
-            secretKeyRef:
-              name: agentconfig
-              key: url
+          value: "https://dev.azure.com/rust-lang"
         - name: AZURE_PIPELINES_POOL
-          valueFrom:
-            secretKeyRef:
-              name: agentconfig
-              key: pool
+          value: "linux-private"
         - name: AZURE_PIPELINES_PAT
           valueFrom:
             secretKeyRef:
