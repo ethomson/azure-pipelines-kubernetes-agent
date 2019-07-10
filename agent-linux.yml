@@ -37,6 +37,9 @@ spec:
       - name: share
         hostPath:
           path: '/data/share'
+      - name: work
+        hostPath:
+          path: '/data/work'
       - name: dockersock
         hostPath:
           path: '/var/run/docker.sock'

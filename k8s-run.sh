@@ -4,6 +4,7 @@ set -e
 
 DEFAULT_IMAGE="ethomson/azure-pipelines-k8s-linux:latest"
 DEFAULT_SHAREDIR="/data/share"
+DEFAULT_WORKDIR="/data/work"
 
 if [ -z "$AZURE_PIPELINES_URL" -o -z "$AZURE_PIPELINES_POOL" -o -z "$AZURE_PIPELINES_PAT" ]; then
 	echo "Configuration is incomplete; the following environment variables must be set:" >&2
@@ -61,13 +62,21 @@ while [ $ret -eq 0 ]; do
     echo ":: Updating agent image..."
     docker pull "${AGENT_IMAGE}"
 
+    echo ""
+    echo ":: Cleaning up workdir..."
+    if [ -d "${AGENT_WORKDIR}" ]; then
+        cd "${AGENT_WORKDIR}" && rm -rf *
+    else
+        mkdir "${AGENT_WORKDIR}"
+    fi
+
 	echo ""
 	echo ":: Starting agent..."
 
 	# Run the agent; map the shared path as a read-only share so that
 	# the build code is wholly isolated and cannot mutate any shared
 	# state.
-	docker run -v "${AGENT_SHAREDIR}:${AGENT_SHAREDIR}:ro" -v "/var/run/docker.sock:/var/run/docker.sock" -e "AGENT_ALLOW_RUNASROOT=1" "${AGENT_IMAGE}" /bin/sh -c "cp -R ${AGENT_SHAREDIR}/agent / && /agent/run.sh --once" || ret=$? && true
+	docker run -v "${AGENT_SHAREDIR}:${AGENT_SHAREDIR}:ro" -v "${AGENT_WORKDIR}:${AGENT_WORKDIR}" -v "/var/run/docker.sock:/var/run/docker.sock" -e "AGENT_ALLOW_RUNASROOT=1" "${AGENT_IMAGE}" /bin/sh -c "cp -R ${AGENT_SHAREDIR}/agent / && /agent/run.sh --once" || ret=$? && true
 	echo ":: Agent exited with: ${ret}"
 done
 
